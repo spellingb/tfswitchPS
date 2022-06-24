@@ -8,6 +8,11 @@ Function Set-TerraformVersion {
         [switch]
         $Install,
 
+        [Parameter(ParameterSetName = 'Uninstall')]
+        [alias('d')]
+        [switch]
+        $Uninstall,
+
         # List installed TF Versions
         [Parameter(ParameterSetName = 'List')]
         [alias('l')]
@@ -30,6 +35,7 @@ Function Set-TerraformVersion {
         [Parameter(ParameterSetName = 'Set',Position = 0, Mandatory = $true)]
         [Parameter(ParameterSetName = 'Install', Position = 0, Mandatory = $true)]
         [Parameter(ParameterSetName = 'List', Position = 0)]
+        [Parameter(ParameterSetName = 'Uninstall', Position = 0)]
         [Parameter(ParameterSetName = 'none', Position = 0)]
         [alias('v')]
         [string]
@@ -40,9 +46,6 @@ Function Set-TerraformVersion {
         [alias('r')]
         [switch]
         $Remote
-
-
-
     )
     Begin {
         $choco = Invoke-Expression "choco list terraform -le"
@@ -225,6 +228,29 @@ Function Set-TerraformVersion {
             } else {
                 Install-TFVersion -Version $Version
             }
+        }
+        if ( $PSCmdlet.ParameterSetName -eq 'Uninstall' ) {
+            Write-Verbose 'Running "Install" Workflow'
+            $tfTargetVersion = Get-TFInstalledVersionList -Version $Version
+
+            if ( [string]::IsNullOrEmpty($tfTargetVersion) ) {
+                Write-Warning "Terraform version [$Version] Not found"
+                return
+            }
+            if ( $tfTargetVersion.isActive ) {
+                Write-Warning 'Version Currently set as active. Unset and try again.'
+                return
+            }
+
+            $versionPath = Split-Path $tfTargetVersion.Path
+
+            try {
+                Remove-Item $versionPath -Force -Confirm:$false -Recurse -ErrorAction Stop
+                Write-Warning "Terraform Version [$Version] deleted successfully"
+            }
+            catch {
+                Write-Warning "Failed to delete Terraform Version [$Version]"
+            } 
         }
         if ( $PSCmdlet.ParameterSetName -eq 'Set' ) {
             Write-Verbose 'Running Workflow [Set]'
