@@ -20,6 +20,12 @@ Function Set-TerraformVersion {
         [switch]
         $Set,
 
+        # Set the active version of Terraform
+        [Parameter(ParameterSetName = 'Unset')]
+        [alias('u')]
+        [switch]
+        $UnSet,
+
         # Specific version of Terraform to view, install, or set as active
         [Parameter(ParameterSetName = 'Set',Position = 0, Mandatory = $true)]
         [Parameter(ParameterSetName = 'Install', Position = 0, Mandatory = $true)]
@@ -221,6 +227,11 @@ Function Set-TerraformVersion {
         if ( $PSCmdlet.ParameterSetName -eq 'Set' ) {
             Write-Verbose 'Running Workflow [Set]'
             Set-TFActiveVersion -Version $Version
+            Get-TFActiveVersion
+        }
+        if ( $PSCmdlet.ParameterSetName -eq 'Unset' ) {
+            Write-Verbose 'Running Workflow [Unset]'
+            Clear-TFActiveVersion   
             Get-TFActiveVersion
         }
         if ( $PSCmdlet.ParameterSetName -eq 'List' ) {
