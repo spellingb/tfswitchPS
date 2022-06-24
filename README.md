@@ -71,4 +71,6 @@ Install specific version.
 
 Uninstall version
 
-    tbd
+    tfswitch -d 1.2.2
+    or
+    tfswitch -Uninstall 1.2.2
