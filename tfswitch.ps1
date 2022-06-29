@@ -69,7 +69,6 @@ Function Set-TerraformVersion {
             if ( !$tfversions ) {
                 Write-Warning "No Terraform Install found in location $baseInstallDir"
             }
-            $currentTFVersion = Get-TFActiveVersion -WarningAction SilentlyContinue
 
             $tfVersions | ForEach-Object {
                 $versionTemp = Split-Path $_ -Parent | Split-Path -Leaf
