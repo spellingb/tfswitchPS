@@ -9,6 +9,12 @@ if ( $choco ){
         exit 1
     }
 }
+
+#endregion
+
+#region Configuration
+$env:TFSWITCH_BASEDIR = ( Resolve-Path ~\.terraform ).Path
+
 #endregion
 
 #region LoadFunctions
