@@ -66,8 +66,8 @@ Function Set-TerraformVersion {
             }
         }
         if ( $PSCmdlet.ParameterSetName -eq 'Install' ) {
-            Write-Verbose 'Running "Install" Workflow'
-            $tfTargetVersion = tfswitch -List -Remote -Version $Version
+            Write-Verbose 'Running Workflow [Install]'
+            $tfTargetVersion = Get-TerraformRemoteVersionList -Version $Version
 
             if ( [string]::IsNullOrEmpty($tfTargetVersion) ) {
                 Write-Warning "Terraform version [$Version] Not found"
@@ -121,7 +121,11 @@ Function Set-TerraformVersion {
                     Get-TerraformRemoteVersionList
                 }
             } else {
-                Get-TerraformInstalledVersionList | Where-Object { if($Version){$_.Version -like "*$Version*"}else{$true} }
+                if ( $Version ) {
+                    Get-TerraformInstalledVersionList -Version $Version    
+                }else {
+                    Get-TerraformInstalledVersionList
+                }
             }
         }
     }

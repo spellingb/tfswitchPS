@@ -15,7 +15,7 @@ on:
       - development
       - release/*
   pull_request:
-    branches: [ "main" ]
+    branches: [ "Master" ]
   schedule:
     - cron: '26 14 * * 3'
     

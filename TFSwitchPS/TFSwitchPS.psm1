@@ -1,3 +1,4 @@
+#Region Dependencies
 $choco = Invoke-Expression "choco list terraform -le"
 if ( $choco ){
     $chocoPackageInstalls = $choco | Where-Object {$_ -match "\d{1,} packages installed" }
@@ -8,6 +9,13 @@ if ( $choco ){
         exit 1
     }
 }
+
+#endregion
+
+#region Configuration
+$env:TFSWITCH_BASEDIR = ( Resolve-Path ~\.terraform ).Path
+
+#endregion
 
 #region LoadFunctions
 $PublicFunctions = @( Get-ChildItem -Path "$PSScriptRoot/Public/*.ps1" -ErrorAction SilentlyContinue )
@@ -29,3 +37,4 @@ foreach ($file in @($PublicFunctions + $PrivateFunctions)) {
     }
 }
 # Export-ModuleMember -Function $PublicFunctions.BaseName -Alias *
+#endregion

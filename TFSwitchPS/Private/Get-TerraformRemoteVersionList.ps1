@@ -16,7 +16,7 @@ Function Get-TerraformRemoteVersionList{
         New-Object psobject -Property ([ordered]@{
             Version = $htmlInput.TrimStart().Split('"')[1].Split('/').Where({$_})[-1]
             Name = $versionName
-            isInstalled = [bool](tfswitch -list -Version $version)
+            isInstalled = [bool](Get-TerraformInstalledVersionList -Version $version -Verbose:$false -WarningAction SilentlyContinue)
             Link = $href
         })
     }
