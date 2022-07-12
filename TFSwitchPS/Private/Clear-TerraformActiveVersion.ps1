@@ -3,6 +3,7 @@ Function Clear-TerraformActiveVersion {
     [alias('Clear-TFActiveVersion')]
     param (
     )
+    Write-Verbose "Clearing Active Terraform Version State"
     Remove-Item Env:\TFSWITCH_PATH -ErrorAction SilentlyContinue
     Remove-Item Env:\TFSWITCH_VERSION -ErrorAction SilentlyContinue
     $pathTemp = $env:Path.Clone()

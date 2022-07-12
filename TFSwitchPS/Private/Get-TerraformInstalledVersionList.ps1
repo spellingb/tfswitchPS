@@ -5,24 +5,29 @@ Function Get-TerraformInstalledVersionList {
         [string]
         $Version
     )
-    $tfVersions = Get-ChildItem $baseInstallDir -Recurse -File -Filter 'terraform.exe'
-    if ( !$tfversions ) {
-        Write-Warning "No Terraform Install found in location $baseInstallDir"
-    }
+    Write-Verbose "Retrieving List of Installed Terraform Versions"
 
-    $tfVersions | ForEach-Object {
+    $tfVersions = Get-ChildItem $env:TFSWITCH_BASEDIR -Recurse -File -Filter 'terraform.exe'
+    if ( !$tfversions ) {
+        Write-Warning "No Terraform Install found in location $env:TFSWITCH_BASEDIR"
+    } elseif ( $Version ) {
+        Write-Verbose "Filtering for Version [$Version]"
+    }
+    
+    $return = $tfVersions | ForEach-Object {
         $versionTemp = Split-Path $_ -Parent | Split-Path -Leaf
         New-Object psobject -Property ([ordered]@{
             Version = $versionTemp
             isActive = $versionTemp -eq $env:TFSWITCH_VERSION
             Path = $_.FullName
         })
-    } | Where-Object { if($Version){$_.Version -eq $Version }else{$true}}
-                
-        # ForEach-Object {
-        #     New-object psobject -Property ([Ordered]@{
-        #         Version = (Invoke-Expression "$($_.FullName) --version" | Where-Object { $_ -match 'Terraform v\d{1,}\.\d{1,}\.\d{1,}' }).Split()[-1].Trim('v')
-        #         Path = $_.FullName
-        #     })
-        # } | Where-Object {if($Version){$_.Version -eq $Version}else{$true}}
+    }
+    if ( $Version ) {
+        $return = $return | Where-Object { $_.Version -eq $Version }
+        if ( !$return ) {
+            Write-Warning "[$Version] version not found locally."
+        }
+    }
+
+    return $return
 }
