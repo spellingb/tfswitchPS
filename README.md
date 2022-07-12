@@ -3,11 +3,14 @@
 Powershell utility to switch between Terraform versions
 
 ## INSTALLATION
-Download the module
+
+Install the module from PSGallery
+
+    Install-Module -Name TFSwitchPS
 
 Import the Module
 
-    Import-Module .\tfswitch.ps1
+    Import-Module -Name TFSwitchPS
 
 ## USAGE
 
