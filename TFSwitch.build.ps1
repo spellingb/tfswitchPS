@@ -6,8 +6,8 @@
 param(
     [String[]]$Tag,
     [String[]]$ExcludeTag = @("Integration"),
-    [String]$PSGalleryAPIKey,
-    [String]$GithubAccessToken,
+    [String]$PSGalleryAPIKey = $(get-content .\nugetKey),
+    [String]$GithubAccessToken = $(get-content .\ghtoken),
     [bool]$Test
 )
 $test = $true
@@ -128,7 +128,7 @@ task CopyModuleFiles {
         "$env:BHProjectPath/CHANGELOG.md"
         "$env:BHProjectPath/LICENSE"
         "$env:BHProjectPath/README.md"
-    ) -Destination "$env:BHBuildOutput/$env:BHProjectName" -Force
+    ) -Destination "$env:BHBuildOutput/$env:BHProjectName" -Force -ErrorAction SilentlyContinue
 }
 
 # Synopsis: Prepare tests for ./Release
@@ -140,7 +140,7 @@ task PrepareTests Init, {
 
 # Synopsis: Compile all functions into the .psm1 file
 task CompileModule Init, {
-    $regionsToKeep = @('Dependencies', 'Configuration')
+    $regionsToKeep = @('Dependencies')
 
     $targetFile = "$env:BHBuildOutput/$env:BHProjectName/$env:BHProjectName.psm1"
     $content = Get-Content -Encoding UTF8 -LiteralPath $targetFile
@@ -174,12 +174,26 @@ task CompileModule Init, {
     "Private", "Public" | Foreach-Object { Remove-Item -Path "$env:BHBuildOutput/$env:BHProjectName/$_" -Recurse -Force }
 }
 
+# Synopsis: Use PlatyPS to Update internal Help 
+task UpdateMarkdownHelp Init, {
+    # New-MarkdownHelp -Module tfswitchPS -OutputFolder .\docs\en-US -Force -Locale en-US -WithModulePage
+    Import-Module platyPS -Force
+    Remove-Module $env:BHProjectName -ErrorAction SilentlyContinue
+    Import-Module $env:BHPSModuleManifest -Force
+
+    foreach ($locale in (Get-ChildItem "$env:BHProjectPath/docs" -Attribute Directory)) {
+        Update-MarkdownHelpModule -Path "$($locale.FullName)"
+    }
+    Remove-Module platyPS
+    Remove-Module $env:BHProjectName -ErrorAction SilentlyContinue
+}
+
+
 # Synopsis: Use PlatyPS to generate External-Help
 task GenerateExternalHelp Init, {
     Import-Module platyPS -Force
     foreach ($locale in (Get-ChildItem "$env:BHProjectPath/docs" -Attribute Directory)) {
         New-ExternalHelp -Path "$($locale.FullName)" -OutputPath "$env:BHModulePath/$($locale.Basename)" -Force
-        New-ExternalHelp -Path "$($locale.FullName)/commands" -OutputPath "$env:BHModulePath/$($locale.Basename)" -Force
     }
     Remove-Module platyPS
 }
@@ -223,17 +237,24 @@ task Test Init, {
     $codeCoverageFiles = Get-ChildItem @params #>
 
     try {
-        $parameter = @{
-            Script       = "$env:BHBuildOutput/Tests/*"
-            Tag          = $Tag
-            ExcludeTag   = $ExcludeTag
-            Show         = "Fails"
-            PassThru     = $true
-            OutputFile   = "$env:BHProjectPath/Test-$OS-$($PSVersionTable.PSVersion.ToString()).xml"
-            OutputFormat = "NUnitXml"
-            # CodeCoverage = $codeCoverageFiles
-        }
-        $testResults = Invoke-Pester @parameter
+        $pesterConfig = New-PesterConfiguration
+        $pesterConfig.Run.PassThru = $true
+        $pesterConfig.Filter.Tag = $Tag
+        $pesterConfig.Filter.ExcludeTag = $ExcludeTag
+        $pesterConfig.Run.Path = "$env:BHBuildOutput/Tests/"
+        $testResults = Invoke-Pester -Configuration $pesterConfig
+        # $parameter = @{
+        #     Script       = "$env:BHBuildOutput/Tests/*"
+        #     Tag          = $Tag
+        #     ExcludeTag   = $ExcludeTag
+        #     Show         = "Fails"
+        #     PassThru     = $true
+        #     OutputFile   = "$env:BHProjectPath/Test-$OS-$($PSVersionTable.PSVersion.ToString()).xml"
+        #     OutputFormat = "NUnitXml"
+        #     # CodeCoverage = $codeCoverageFiles
+        # }
+        # $testResults = Invoke-Pester @parameter
+
 
         Assert-True ($testResults.FailedCount -eq 0) "$($testResults.FailedCount) Pester test(s) failed."
     }
@@ -249,15 +270,12 @@ task Deploy Init, PublishToGallery, TagReplository #, UpdateHomepage
 
 # Synpsis: Publish the $release to the PSGallery
 task PublishToGallery {
-    if ( $Test ) {
-        $PSGalleryAPIKey = Get-Content "$env:BHProjectPath\nugetKey"
-    }
     Assert-True (-not [String]::IsNullOrEmpty($PSGalleryAPIKey)) "No key for the PSGallery"
     Assert-True { Get-Module $env:BHProjectName -ListAvailable } "Module $env:BHProjectName is not available"
 
     Remove-Module $env:BHProjectName -ErrorAction Ignore
 
-    Publish-Module -Name $env:BHPSModuleManifest -NuGetApiKey $PSGalleryAPIKey
+    Publish-Module -Name $env:BHProjectName -NuGetApiKey $PSGalleryAPIKey
 }
 
 # Synopsis: push a tag with the version to the git repository
@@ -336,7 +354,7 @@ task RemoveTestResults {
     Remove-Item "Test-*.xml" -Force -ErrorAction SilentlyContinue
 }
 #endregion
-
+task Publish ShowInfo, Clean, Build, Test, Deploy
 task . ShowInfo, Clean, Build, Test
 
 Remove-Item -Path Env:\BH*
