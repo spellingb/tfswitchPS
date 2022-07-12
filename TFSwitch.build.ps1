@@ -140,7 +140,7 @@ task PrepareTests Init, {
 
 # Synopsis: Compile all functions into the .psm1 file
 task CompileModule Init, {
-    $regionsToKeep = @('Dependencies')
+    $regionsToKeep = @('Dependencies', 'Configuration')
 
     $targetFile = "$env:BHBuildOutput/$env:BHProjectName/$env:BHProjectName.psm1"
     $content = Get-Content -Encoding UTF8 -LiteralPath $targetFile
@@ -151,7 +151,7 @@ task CompileModule Init, {
         if ($line -match "^#region ($($regionsToKeep -join "|"))$") {
             $capture = $true
         }
-        if (($capture -eq $true) -and ($line -match "^#endregion")) {
+        if (($capture -eq $true) -and ($line -match "^#endregion ")) {
             $capture = $false
         }
 
@@ -275,7 +275,7 @@ task PublishToGallery {
 
     Remove-Module $env:BHProjectName -ErrorAction Ignore
 
-    Publish-Module -Name $env:BHProjectName -NuGetApiKey $PSGalleryAPIKey
+    Publish-Module -Name $env:BHProjectName -NuGetApiKey $PSGalleryAPIKey -RequiredVersion $env:NextBuildVersion
 }
 
 # Synopsis: push a tag with the version to the git repository
