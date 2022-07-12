@@ -248,15 +248,15 @@ function Remove-Utf8Bom {
     }
 }
 
-# function Set-GitUser {
-#     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
-#     param()
-#     # github's PAT is stored to ~\.git-credentials within the Release Pipeline
-#     # to avoid it being passed as parameter
+function Set-GitUser {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
+    param()
+    # github's PAT is stored to ~\.git-credentials within the Release Pipeline
+    # to avoid it being passed as parameter
 
-#     if (-not (git config user.email)) { git config user.email "brandonspell08@gmail.com" }
-#     if (-not (git config user.name)) { git config user.name "AtlassianPS Automated User" }
-#     if (-not (git config credential.helper)) { git config credential.helper "store --file ~/.git-credentials" }
-# }
+    if (-not (git config user.email)) { git config user.email "brandonspell08@gmail.com" }
+    if (-not (git config user.name)) { git config user.name "spellingb" }
+    if (-not (git config credential.helper)) { git config credential.helper "store --file ~/.git-credentials" }
+}
 
 Export-ModuleMember -Function * -Alias *
