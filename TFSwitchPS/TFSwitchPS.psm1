@@ -1,4 +1,4 @@
-#Region Test for Chocolatey Repository Usage
+#Region Dependencies
 $choco = Invoke-Expression "choco list terraform -le"
 if ( $choco ){
     $chocoPackageInstalls = $choco | Where-Object {$_ -match "\d{1,} packages installed" }
