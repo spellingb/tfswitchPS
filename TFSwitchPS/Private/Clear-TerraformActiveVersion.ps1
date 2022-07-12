@@ -1,6 +1,6 @@
 Function Clear-TerraformActiveVersion {
     [CmdletBinding()]
-    [alias('Clear-TFActiveVersion')]
+    # [alias('Clear-TFActiveVersion')]
     param (
     )
     Write-Verbose "Clearing Active Terraform Version State"

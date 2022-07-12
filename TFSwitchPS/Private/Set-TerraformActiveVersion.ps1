@@ -1,13 +1,14 @@
 Function Set-TerraformActiveVersion{
     [CmdletBinding()]
-    [Alias('Set-TFActiveVersion')]
+    # [Alias('Set-TFActiveVersion')]
     param (
         [Parameter()]
         [string]
         $Version
     )
     Begin {
-        Clear-TFActiveVersion
+        Clear-TerraformActiveVersion
+        
         $targetVersion = Get-TerraformInstalledVersionList -Version $Version
     }
     Process {

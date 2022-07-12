@@ -1,6 +1,6 @@
 Function Install-TerraformVersion {
     [CmdletBinding()]
-    [Alias('Install-TFVersion')]
+    # [Alias('Install-TFVersion')]
 
     param (
 
