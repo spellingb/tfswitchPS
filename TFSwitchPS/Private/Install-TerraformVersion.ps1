@@ -26,7 +26,7 @@ Function Install-TerraformVersion {
         $versionDirectory = Join-Path -Path $env:TFSWITCH_BASEDIR -ChildPath $Version
 
         New-Item $versionDirectory -Force -ItemType Directory | Out-Null
-    
+
         #Get Remote Version
         $targetVersion = Get-TerraformRemoteVersionList -Version $Version
 
@@ -46,12 +46,12 @@ Function Install-TerraformVersion {
             try {
                 #Download Zip File to temp location
                 Invoke-WebRequest @splat
-        
+
                 #Unzip to destination
                 Expand-Archive -Path $splat.OutFile -DestinationPath $versionDirectory -Force
-        
+
                 #Validate File
-                $validatedFile = Test-TFVersion -Version $Version
+                $validatedFile = Test-TerraformVersion -Version $Version
 
                 if ( $validatedFile ) {
 
@@ -62,10 +62,10 @@ Function Install-TerraformVersion {
                     throw 'File Validation Failed'
 
                 }
-        
+
                 #Clean up
                 Remove-Item -Path $splat.OutFile -Force -ErrorAction SilentlyContinue
-        
+
             }
             catch {
 
@@ -76,8 +76,8 @@ Function Install-TerraformVersion {
                 return $null
 
             }
-    
+
         }
-            
+
     }
 }
