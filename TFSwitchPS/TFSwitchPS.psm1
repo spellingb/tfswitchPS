@@ -1,10 +1,9 @@
 #Region Dependencies
-$choco = Invoke-Expression "choco list terraform -le"
-if ( $choco ){
-    $chocoPackageInstalls = $choco | Where-Object {$_ -match "\d{1,} packages installed" }
-    [int]$packageCount = $chocoPackageInstalls.Substring(0,2).trim()
-    if ( $packageCount ) {
-        Write-Warning "Chocolatey Terraform Packages detected. Uninstall in order to use tfswitch."
+$choco = Get-Command 'choco.exe' -ErrorAction SilentlyContinue
+if ( $choco ) {
+    $chocoInstalledTerraform = . {choco list -local -allversions --limitoutput --exact 'terraform'} #| Where-Object { $_ -match "\d{1,} packages installed" }
+    if ( $chocoInstalledTerraform ) {
+        Write-Warning 'Chocolatey Terraform Packages detected. Uninstall in order to use tfswitch. (Command: "choco uninstall terraform -a -f -y" )'
         $choco
         exit 1
     }
