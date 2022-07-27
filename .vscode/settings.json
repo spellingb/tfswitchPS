@@ -1,0 +1,39 @@
+{
+    "[powershell]": {
+        "files.encoding": "utf8bom",
+        "files.autoGuessEncoding": true,
+        "editor.formatOnSave": false
+    },
+    "powershell.scriptAnalysis.settingsPath": ".vscode/analyzersettings.psd1",
+    "powershell.scriptAnalysis.enable": true,
+    "files.trimTrailingWhitespace": true,
+    "powershell.codeFormatting.preset": "Stroustrup",
+    "cSpell.enabled": true,
+    "cSpell.words": [
+        "Allman",
+        "appveyor",
+        "buildheader",
+        "buildspec",
+        "buildspec_pwsh_windows",
+        "Catesta",
+        "CICD",
+        "cmdlets",
+        "dotnet",
+        "drawio",
+        "githubactions",
+        "gitignore",
+        "jakemorrison",
+        "json",
+        "moduleonly",
+        "NOTVAULT",
+        "OTBS",
+        "outputfile",
+        "ps1xml",
+        "pwsh",
+        "pwshcore",
+        "Stroustrup",
+        "vscode",
+        "yaml",
+        "yml"
+    ]
+}
