@@ -27,7 +27,7 @@ Function Set-TerraformVersion {
 
         # Set the active version of Terraform
         [Parameter(ParameterSetName = 'Unset')]
-        [alias('u')]
+        [alias('u', 'clear')]
         [switch]
         $UnSet,
 
@@ -35,7 +35,7 @@ Function Set-TerraformVersion {
         [Parameter(ParameterSetName = 'Set',Position = 0, Mandatory = $true)]
         [Parameter(ParameterSetName = 'Install', Position = 0, Mandatory = $true)]
         [Parameter(ParameterSetName = 'List', Position = 0)]
-        [Parameter(ParameterSetName = 'Uninstall', Position = 0)]
+        [Parameter(ParameterSetName = 'Uninstall', Position = 0, Mandatory = $true)]
         [Parameter(ParameterSetName = 'none', Position = 0)]
         [alias('v')]
         [string]
@@ -56,13 +56,13 @@ Function Set-TerraformVersion {
 
     }
     Process {
-        
+
         if ( $PSCmdlet.ParameterSetName -eq 'none' ) {
             Write-Verbose 'Running Workflow [default]'
             if ( $Version ) {
                 tfswitch -Set -Version $Version
             } else {
-                Get-TerraformActiveVersion    
+                Get-TerraformActiveVersion
             }
         }
         if ( $PSCmdlet.ParameterSetName -eq 'Install' ) {
@@ -80,7 +80,7 @@ Function Set-TerraformVersion {
             }
         }
         if ( $PSCmdlet.ParameterSetName -eq 'Uninstall' ) {
-            Write-Verbose 'Running "Install" Workflow'
+            Write-Verbose 'Running Workflow [Uninstall]'
             $tfTargetVersion = Get-TerraformInstalledVersionList -Version $Version
 
             if ( [string]::IsNullOrEmpty($tfTargetVersion) ) {
@@ -100,7 +100,7 @@ Function Set-TerraformVersion {
             }
             catch {
                 Write-Warning "Failed to delete Terraform Version [$Version]"
-            } 
+            }
         }
         if ( $PSCmdlet.ParameterSetName -eq 'Set' ) {
             Write-Verbose 'Running Workflow [Set]'
@@ -109,7 +109,7 @@ Function Set-TerraformVersion {
         }
         if ( $PSCmdlet.ParameterSetName -eq 'Unset' ) {
             Write-Verbose 'Running Workflow [Unset]'
-            Install-TerraformActiveVersion   
+            Clear-TerraformActiveVersion
             Get-TerraformActiveVersion
         }
         if ( $PSCmdlet.ParameterSetName -eq 'List' ) {
@@ -122,7 +122,7 @@ Function Set-TerraformVersion {
                 }
             } else {
                 if ( $Version ) {
-                    Get-TerraformInstalledVersionList -Version $Version    
+                    Get-TerraformInstalledVersionList -Version $Version
                 }else {
                     Get-TerraformInstalledVersionList
                 }
