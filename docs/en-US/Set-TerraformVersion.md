@@ -8,56 +8,122 @@ schema: 2.0.0
 # Set-TerraformVersion
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+
+Use this function to manage the active version of Terraform
 
 ## SYNTAX
 
 ### none (Default)
+
 ```
 Set-TerraformVersion [[-Version] <String>] [<CommonParameters>]
 ```
 
 ### Install
+
 ```
 Set-TerraformVersion [-Install] [-Version] <String> [<CommonParameters>]
 ```
 
 ### Uninstall
+
 ```
 Set-TerraformVersion [-Uninstall] [[-Version] <String>] [<CommonParameters>]
 ```
 
 ### List
+
 ```
 Set-TerraformVersion [-List] [[-Version] <String>] [-Remote] [<CommonParameters>]
 ```
 
 ### Set
+
 ```
 Set-TerraformVersion [-Set] [-Version] <String> [<CommonParameters>]
 ```
 
 ### Unset
+
 ```
 Set-TerraformVersion [-UnSet] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+
+Use this cmdlet to List, Install, Uninstall, and Set the active version of Terraform. The version is persistent.
+Installing a version of Terraform does not automatically set it as active.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> tfswitch
 ```
 
-{{ Add example description here }}
+this will return the current active version of terraform
+
+### Example 2
+
+```powershell
+PS C:\> tfswitch -l
+```
+
+this will return a list of installed terraform versions
+
+### Example 3
+
+```powershell
+PS C:\> tfswitch -l -r
+```
+
+this will return a list of terraform versions available for install
+
+### Example 4
+
+```powershell
+PS C:\> tfswitch -r 1.2.*
+```
+
+this will return a list of remote terraform versions that contain 1.2
+
+### Example 5
+
+```powershell
+PS C:\> tfswitch -i 1.2.5
+```
+
+this will install Terraform version 1.2.5
+
+### Example 6
+
+```powershell
+PS C:\> tfswitch 1.2.5
+```
+
+this will set Terraform version 1.2.5 as the active version
+
+### Example 7
+
+```powershell
+PS C:\> tfswitch -UnSet
+```
+
+this will clear the active terraform version
+
+### Example 8
+
+```powershell
+PS C:\> tfswitch -Uninstall 1.2.5
+```
+
+this will uninstall Terraform version 1.2.5
+
 
 ## PARAMETERS
 
 ### -Install
-{{ Fill Install Description }}
+Installs a specific terraform version
 
 ```yaml
 Type: SwitchParameter
@@ -72,7 +138,7 @@ Accept wildcard characters: False
 ```
 
 ### -List
-{{ Fill List Description }}
+Lists terraform versions. by default, lists local versions. us the -Remote parameter to list remote versions
 
 ```yaml
 Type: SwitchParameter
@@ -87,7 +153,7 @@ Accept wildcard characters: False
 ```
 
 ### -Remote
-{{ Fill Remote Description }}
+Lists terraform versions available for install
 
 ```yaml
 Type: SwitchParameter
@@ -102,7 +168,7 @@ Accept wildcard characters: False
 ```
 
 ### -Set
-{{ Fill Set Description }}
+Sets the active terraform version. this is the default parameter if you run tfswitch VERSION
 
 ```yaml
 Type: SwitchParameter
@@ -117,7 +183,7 @@ Accept wildcard characters: False
 ```
 
 ### -UnSet
-{{ Fill UnSet Description }}
+Clears the active terraform version, leaving no version as active.
 
 ```yaml
 Type: SwitchParameter
@@ -132,7 +198,7 @@ Accept wildcard characters: False
 ```
 
 ### -Uninstall
-{{ Fill Uninstall Description }}
+Uninstalls the specified version of Terraform and deletes the local files.
 
 ```yaml
 Type: SwitchParameter
@@ -147,7 +213,7 @@ Accept wildcard characters: False
 ```
 
 ### -Version
-{{ Fill Version Description }}
+Specify the version number when performing an operation
 
 ```yaml
 Type: String
